@@ -1,0 +1,287 @@
+# Careers 
+
+The GEAM covers many variables concerned with the working conditions of respondents, including type of contract, complementary bonus, recruitment and training options, work-life balance, parental leave, among others. 
+
+Among the central dimensions of gender inequality in academic organizations are issues career advancement. Vertical segregration is a well known fact, that women are significantly under-represented at more senior positions. In the EU-28 in 2016, women made up 48% of students and graduates at doctoral level but only 24% of grade A academic staff and 22% of heads of institutions in the higher education sector  [@EuropeanCommissionShefigures20182019]. 
+
+The overall result of fewer women at the top is the result of a many different factors contributing to an overall slower career progression of women. 
+
+For example, the analysis of the ASSET 2016 survey uncovered how differences between men and women regarding type of contracts, parental leave and others can have a cumulative effect on women’s careers and representation. 
+
+```{r echo=FALSE, fig.align='center'}
+knitr::include_graphics(path="images/ASSET_careerpath.jpg")
+```
+
+The GEAM holds several variables that contribute to an analysis of career progression and the potential  disadvantages faced by women compared to their male colleauges. These variables include: 
+
+* type of contract (`WCJC010`)
+* parental leave (`WCWI011a` and `WCWI011b`)
+* care responsibilties (`WCWI006` and `WCWI008` )
+* work-family conflict (`WorkFamConfISSP`)
+
+
+## Type of contract: full- or part-time
+
+Question `WCJC010` asks about if respondents have a full-time or part-time contract. 
+
++-----------+-----------------------------------------------------------------+----------------------------+
+| Code      | Question                                                        | Responses                  |
++===========+=================================================================+============================+
+| `WCJC010` | Are you on a full- or part-time contract?                       | [1] Part-time\             |
+|           |                                                                 | [2] Full-time\             |
+|           |                                                                 | [3] Other:\                |
++-----------+-----------------------------------------------------------------+----------------------------+
+
+
+First, let's look at the responses directly: 
+
+```{r echo=F}
+
+#define palette for all 
+cpal <- RColorBrewer::brewer.pal(4, "Set1")
+
+```
+
+```{r wc-type-contract, echo=F, fig.cap="Part-time or full-time contract", out.width="75%", fig.align='center'}
+
+df.geam %>% 
+  ggplot(aes(x=WCJC010, fill=WCJC010)) + 
+  geom_bar(width=.8) +
+  geom_text(stat='count', 
+              aes(label=..count..), 
+              position=position_dodge(width=.8), 
+              vjust=-.6) +
+  scale_fill_manual(values=cpal, na.value=cpal[4]) +
+  labs(x="", y="", fill="Type of contract") +
+  ylim(0,100) +
+  guides(fill=F) +
+  theme_light()
+```
+
+
+### Type of contract by gender {-}
+In order to explore specific group differences for type of contract, we need to use the [$\chi^2$ test](#chisquaretest) as we are dealing with two categorical variables: gender and type of contract. The $\chi^2$ tests whether the number of respondents in the subgroups between men working part-time, women working part-time, men working full-time and women working full-time is significantly different from what would be expected by chance. 
+
+Getting the data into shape: let's subset the original data matrix according to the variables of interest, namely `gender` and `type of contract`. We also remove the `Other` answer category as well as non-responses `NA` while renaming the corresponding variable codes to something more meaningful.      
+
+```{r}
+
+df.sub <- df.geam %>% 
+  filter(WCJC010 != "Other" & !is.na(WCJC010)) %>% 
+  select(TypeContract=WCJC010, Gender=SDEM004.bin)
+
+```
+
+As a first step, let's look at the 4x4 contingency table: 
+
+
+```{r echo=F, out.width="100%"}
+xtab <- table(df.sub)
+xtab <- addmargins(xtab)
+
+kbl(xtab, 
+    booktabs = T,
+    digits=3, 
+    caption="Simple crosstab gender by type of contract") %>%
+    kable_styling(full_width=T, latex_options =c("hold_position"))
+```
+Examining the same information in a more visual manner, the divergence between part-time contracts between women and men becomes clearer: 
+
+```{r out.width="75%", fig.align='center'}
+
+df.sub %>% 
+    ggplot(aes(x=TypeContract, fill=Gender)) + 
+    geom_bar(width=.8, 
+             position=position_dodge()) +
+    geom_text(stat='count', 
+              aes(label=..count..), 
+              position=position_dodge(width=.8), 
+              vjust=-.6) +
+    scale_fill_manual(values=cpal) +
+    ylim(0,65) +
+    labs(x="", y="", fill="Gender") +
+    theme_light()
+```
+
+
+Now we apply the [$\chi^2$ test](#chisquaretest) to identify whether the distribution of men and women across the groups of staff (i.e. part- or full-time staff) is relatively proportionate: 
+
+```{r}
+
+chisq.test(df.sub$Gender, df.sub$TypeContract)          
+
+```
+
+As our test reveals, women are significantely more likely to be working on part-time contracts than expected by chance alone as the p-value indicates (< 0.01)
+
+The code examples of the analysis handbook provides a shortcut to print the contingency table and the chi-squared test statistic in one: 
+
+
+```{r wc-tab-contract-gender}
+
+print_xtab(df.sub, "TypeContract","Gender", 
+           caption="Crosstab type of contract by gender", 
+           hlabels=c("Gender","Contract")) %>%
+    kable_styling(full_width=T, latex_options =c("hold_position"))
+```
+
+Why does the above difference in full- and part-time contracts matter? Chi-squared tests can only tell us that the difference in proportions is statistically significant. The interpretation of this difference, and its implications for gender equality, is up to the researcher. In this example, women being overrepresented on part-time contracts can be interpreted as being a disadvantage because most progression in many academic careers is very much tied to research productivity (e.g. publishing articles in academic journals, attending conferences, obtaining grants, being the editor of a journal, etc). Working part-time limits this productivity, which may be detrimental to career progression. 
+
+
+
+
+## Parental leave 
+The frequency with which academic staff takes parental leave can differ by gender. Women often take more parental leave which can negatively affect their academic productivity and hence career progression. 
+
+The GEAM includes a series of questions regarding parental leave. To start with, `WCWI011a` and `WCWI011b` gather baseline data who has taken parental leave and which type: 
+
+| Code        | Question                                         | Responses                  |
+|-------------|--------------------------------------------------|----------------------------|
+| `WCWI011a`  | Considering the last 5 years, have you taken or are you currently taking any form or parental leave? | [1] No |
+|             |                                                  | [2] Yes                    |
+|             |                                                  | [3] Prefer not to say      |
+|             |                                                  |                            |
+| `WCWI011b`  |Which of the following forms of leave have you taken / or are you currently taking? |        [1] Maternity leave    |
+|             |                                                  | [2] Paternity leave        |
+|             |                                                  | [3] Adoption leave         |
+|             |                                                  | [4] Unpaid parental leave  |
+|             |                                                  | [4] Paid parental leave    |
+
+In addition, questions `WCWI016`, `WCWI020`, `WCWI021` gather further details regarding parental leave policies, return to work support measures and if they are preceived as useful. 
+
+Let's examine straight away the gender distribution of staff that has taken any form of parental leavel and those who have not. It seems that women have taken parent leave during the past 5 years more frequently.  
+
+```{r wc-leave, echo=F, fig.cap="Parental leave", out.width="75%", fig.align='center'}
+
+df.geam %>% 
+  filter(!is.na(SDEM004.bin)) %>% 
+    ggplot(aes(x=WCWI011a, fill=SDEM004.bin)) + 
+    geom_bar(width=.8, 
+             position=position_dodge()) +
+    geom_text(stat='count', 
+              aes(label=..count..), 
+              position=position_dodge(width=.8), 
+              vjust=-.6) +
+    scale_fill_manual(values=cpal) +
+    ylim(0,75) +
+    labs(x="", y="", fill="Gender") +
+    theme_light()
+```
+In order to carry out a [$\chi^2$ test](#chisquaretest), we further simplify the contingency table. We create a subset by filtering out all those respondents who did not indicate their gender and those answering "Prefer not to say" when responding to `WCWI011a` on parental leave. 
+
+```{r}
+
+df.sub <- df.geam %>% 
+  filter(!is.na(SDEM004.bin) & WCWI011a != "Prefer not to say") %>% 
+  select(TookLeave=WCWI011a, Gender=SDEM004.bin)
+
+```
+
+
+The corresponding contingency table looks like follows: 
+
+```{r wc-tab-leave-gender}
+
+print_xtab(df.sub, "TookLeave","Gender", 
+           caption="Crosstab parental leave by gender", 
+           hlabels=c("Gender","Took parental leave")) %>%
+    kable_styling(full_width=T, latex_options =c("HOLD_position"))
+```
+
+
+\newpage
+
+
+## Care responsibilities {#careresp}
+
+Women tend to have considerably more care responsibilities than men, both for children but also for dependent adults [@Gimenez-NadalGenderGapTime2020]. The GEAM covers both of these aspects: 
+
++---------+--------------------------------------------------------------------------------+-----------------------+
+| Code    | Question                                                                       | Responses             |
++=========+================================================================================+=======================+
+|`WCWI006`| Are you the primary carer or assistant for an adult requiring care?            | [1] No\               |
+|         |                                                                                | [2] Yes\              |
+|         |                                                                                | [3] Prefer not to say |
++---------+--------------------------------------------------------------------------------+-----------------------+
+|`WCWI008`| Are you the parent or legal guardian of any children aged 17 years or younger? | [1] No\               |
+|         |                                                                                | [2] Yes\              |
+|         |                                                                                | [3] Prefer not to say |
++---------+--------------------------------------------------------------------------------+-----------------------+
+
+A first visual exploration regarding gender differences and being the primary carer for a dependent adult: 
+
+```{r wc-care-adult, echo=F, fig.cap="Primary carer/assistant to an adult", out.width="75%", fig.align='center'}
+
+df.geam %>% 
+  filter(!is.na(SDEM004.bin)) %>% 
+    ggplot(aes(x=WCWI006, fill=SDEM004.bin)) + 
+    geom_bar(width=.8, 
+             position=position_dodge()) +
+    geom_text(stat='count', 
+              aes(label=..count..), 
+              position=position_dodge(width=.8), 
+              vjust=-.6) +
+    scale_fill_manual(values=cpal) +
+    ylim(0,75) +
+    labs(x="", y="", fill="Gender") +
+    theme_light()
+```
+
+And, the corresponding visual exploration of being the parent or legal guardian of any children: 
+
+```{r wc-care-child, echo=F, fig.cap="Parent/legal guardian child", out.width="75%", fig.align='center'}
+
+df.geam %>% 
+  filter(!is.na(SDEM004.bin)) %>% 
+    ggplot(aes(x=WCWI008, fill=SDEM004.bin)) + 
+    geom_bar(width=.8, 
+             position=position_dodge()) +
+    geom_text(stat='count', 
+              aes(label=..count..), 
+              position=position_dodge(width=.8), 
+              vjust=-.6) +
+    scale_fill_manual(values=cpal) +
+    ylim(0,75) +
+    labs(x="", y="", fill="Gender") +
+    theme_light()
+```
+
+For many subsequent analysis (e.g. in relation to the work-family conflict scale), we combine these two care-related variables into a new single variable named `CareResp` which is set to `TRUE` if a respondent is a primary carer for an adult **or** has caring responsibilities for children, and set to `FALSE` otherwise.
+
+```{r}
+  df.geam %<>% 
+        mutate(CareResp = if_else((WCWI006 == "Yes" | 
+                                   WCWI008 == "Yes"), TRUE,FALSE))
+```
+
+This will simplify the application of the [$\chi^2$ test](#chisquaretest) to detect if any gender differences are statistically significant. At this point we do not differentiate which type of care responsibilities respondents have, but simply if there are any gender differences at all. Again, we use a subset of the original data that creates a binary gender variable and removes the `NA` from the `CareResp` variable: 
+
+```{r}
+
+df.sub <- df.geam %>% 
+  filter(!is.na(SDEM004.bin) & !is.na(CareResp)) %>% 
+  select(HasCare=CareResp, Gender=SDEM004.bin)
+
+```
+
+
+\newpage
+
+
+Now we are ready to generate the contingency table: 
+
+```{r wc-tab-care-gender}
+
+print_xtab(df.sub, "HasCare","Gender", 
+           caption="Crosstab care responsibilities by gender", 
+           hlabels=c("Gender","Has care responsibilities")) %>%
+    kable_styling(full_width=T, latex_options =c("hold_position"))
+```
+
+As the contingency table indicates, there are statistically significant gender differences (p < 0.05) regarding the care responsibilities among respondents. As the previous graphics indicate, women tend to shoulder more care responsibilities than men. 
+
+A further recommended step in the analysis can look at age-related differences and type of care responsibilities. It seems plausible to suggest that younger (women) academics will have higher care responsibilities for young children, while older (women) academics will have to care for dependent adults. 
+
+
+\newpage
+

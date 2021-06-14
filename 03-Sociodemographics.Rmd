@@ -1,0 +1,267 @@
+# Characterizing respondents
+
+Questions codes/variables covered in this section: WCJC001 
+
+In this chapter we introduce some basic explorations to understand better the overall profile of respondents. This will take the form of basic frequency charts and tables of single variables.
+
+
+## Sociodemographic variables
+
+### Gender
+
++-----------+-----------------------------------------------------------------+----------------------------+
+| Code      | Question                                                        | Responses                  |
++===========+=================================================================+============================+
+| `SDEM004` | Gender                                                          | [1] A man\                 |
+|           |                                                                 | [2] A woman\               |
+|           |                                                                 | [3] Prefer not to say\     |
+|           |                                                                 | [4] Other                  |
++-----------+-----------------------------------------------------------------+----------------------------+
+
+```{block, type="noteHighlight"}
+Note that a change between GEAM v1 and GEAM v2 concerns the answer options for SDEM004 (Gender). GEAM v2 has an additional option, namely `Non-binary` in addition to the previous existing options. 
+```
+
+The following table demonstrates a quite typical distribution of responses to question `SDEM004` on gender: surveys targeting gender equality issues normally have a higher response rate of women than men. Compared to the overall population of the survey, women tend to be over-represented. 
+
+Ususally there are relatively  few respondents that indicate another gender than "woman" or "man" `Other` or prefer not to answer. For many types of standard analysis, gender will be treated as a binary variable `SDEM004.bin` - which does not exclude, of course, to also examine the specific perceptions and experiences of "Other" genders (see section on small smaple size). 
+
+```{r sdem-gender, fig.cap="Gender", out.width="75%", fig.align='center', echo=F}
+
+cpal <- RColorBrewer::brewer.pal(4, "Set1")
+
+df.geam %>% 
+    ggplot(aes(x=SDEM004, fill=SDEM004)) + 
+    geom_bar(width=.8) + 
+    scale_fill_manual(values=cpal, na.value=cpal[4]) +
+    guides(fill=F) +
+    labs(x="", y="") +
+    theme_light()
+
+```
+
+### Age {#sdem-age}
+
+The age of respondents is capture as a integer input field (`SDEM001` - "In which year were you born?"). 
+
+```{r fig.cap="Frequency chart of year of birth", fig.align='center', out.width="75%"}
+df.geam %>%  
+    filter(!is.na(SDEM001)) %>% 
+    ggplot(aes(x=SDEM001)) + 
+    geom_bar()+ 
+    labs(title="", x="Total") +
+    theme_light() +
+    theme(axis.title.x = element_blank(), 
+          plot.margin = unit(c(.2,1.3,.2,.2), "cm"))
+```
+
+Most statistical analysis will work with aggregated age groups. The GEAM reporting template generates two groupings: 10 year steps, or 4 age groups: "Junior < 30 years", "Middle 31-45 years", "Senior 46-65 years", and above "> 65 years" of age. 
+
+First we create the variable `age` from `SDEM001` taking the current year as point of reference: 
+
+```{r eval=F}
+
+curyear <- as.numeric(format(Sys.Date(), format="%Y"))
+df.geam$age <- curyear - df.geam$SDEM001
+
+```
+
+Then, we create two new variables, for grouping our different age categories: 
+
+```{r}
+
+# sub-divide age into 10-year intervals
+df.geam$age_i10 <- cut(df.geam$age, c(seq(0,80,by=10),130))  
+
+# sub-divde age into 4 age groups:  
+df.geam$age_4g <- cut(df.geam$age, c(0,30,45,65,100), labels=c("Junior (<30)", "Middle (31-45)", "Senior (46-65)", "+65"))
+
+```
+
+These variables will then be used in sub-sequent (intersectional) analysis as we can combine `gender` and `age` categories. This is how our 4-level age groups looks like: 
+
+```{r sdem-age, fig.cap="Binned frequency of respondents age", fig.align='center', out.width="75%"}
+cpal <- RColorBrewer::brewer.pal(5, "Set1")
+
+df.geam %>% 
+    ggplot(aes(x=age_4g, fill=age_4g)) + 
+    geom_bar(width=.8) + 
+    scale_fill_manual(values=cpal, na.value=cpal[5]) +
+    guides(fill=F) +
+    labs(x="", y="") +
+    theme_light()
+```
+
+
+
+### Ethnic mayority / minority status
+
+The GEAM inquires about ethnic minority / mayority status in question `SDEM002`: 
+
++-----------+-----------------------------------------------------------------+----------------------------+
+| Code      | Question                                                        | Responses                  |
++===========+=================================================================+============================+
+| `SDEM002` | Do you currently perceive yourself to be part of a majority or minority ethnic group?| [1] Majority \ |
+|           |                                                                 | [2] Minority \             |
+|           |                                                                 | [3] Unsure\                |
+|           |                                                                 | [4] Prefer not to say      |
++-----------+-----------------------------------------------------------------+----------------------------+
+
+As this question is not mandatory, there are likely to be a larger amount of `NA` entries that need to be removed in subsequent analysis. 
+
+```{r sdem-ethnic, fig.cap="Ethnic status", out.width="75%", fig.align='center', echo=F}
+
+cpal <- RColorBrewer::brewer.pal(4, "Set1")
+
+df.geam %>% 
+    ggplot(aes(x=SDEM002, fill=SDEM002)) + 
+    geom_bar(width=.8) + 
+    scale_fill_manual(values=cpal, na.value=cpal[4]) +
+    guides(fill=F) +
+    labs(x="", y="") +
+    theme_light()
+
+```
+
+The combination of gender and minority status is an important intersectional dimension to examine. 
+
+```{r sdem-ethnic-gender, fig.cap="Ethnic status by gender", out.width="75%", fig.align='center', echo=F}
+
+df.geam %>% 
+    filter(!is.na(SDEM002) & !is.na(SDEM004.bin)) %>% 
+    ggplot(aes(x=SDEM002, fill=SDEM004.bin)) + 
+    geom_bar(width=.8, 
+             position=position_dodge()) +
+    geom_text(stat='count', 
+              aes(label=..count..), 
+              position=position_dodge(width=.8), 
+              vjust=-.6) +
+    scale_fill_manual(values=cpal) +
+    ylim(0,45) +
+    labs(x="", y="", fill="Gender") +
+    theme_light()
+
+```
+
+
+
+
+## Job characteristics
+
+
+### Current position 
+
++-----------+-----------------------------------------------------------------+----------------------------+
+| Code      | Question                                                        | Responses                  |
++===========+=================================================================+============================+
+| `WCJC001` | What is your current position in the organization you work for? | [1] Academic / researcher\ |
+|           |                                                                 | [2] Technician\            |
+|           |                                                                 | [3] Administrative\        |
+|           |                                                                 |                            |
++-----------+-----------------------------------------------------------------+----------------------------+
+
+
+Question `WCJC001` inquires about the current position of respondents, according to the following three categories:
+
+-   **Academic / researcher:** refers to academic teaching staff, researchers including PhD or postdoc positions.
+-   **Technician**: laboratory technicians, research assistants, and other support staff for academic or research tasks.
+-   **Administrative**: refers to administrative-, secretarial-, finance-, management- or Human Resources staff.
+
+Although these staff categories could be further subdivided, we kept the categorization very simple on purpose following the Frascati Manual classification of R&D personnel [@frascati2015 page 161ff]. Ideally the staff categories can be analyzed in paralell to question `WCJC004` on respondents current post. 
+
+In a first visual exploration, we can see that most responses come from "Academic/ researcher", followed by "Administrative" staff and "Technicians".
+
+```{r wc-pos, fig.cap="Job positon", out.width="75%", fig.align='center', echo=F}
+
+df.geam %>% 
+    ggplot(aes(x=WCJC001, fill=WCJC001)) + 
+    geom_bar(width=.8) + 
+    scale_fill_manual(values=cpal, na.value=cpal[4]) +
+    guides(fill=F) +
+    labs(x="", y="") +
+    theme_light()
+
+```
+
+One would expect that women are overrepresented among administrative personnel while the gender represenattion should be more equal at the academic level (depending on age) and for technicians. In the following code, we also remove all `NA`s from both the gender as well as job position variable:
+
+```{r wc-job-gender, fig.cap="Job position by gender", out.width="75%", fig.align='center'}
+
+df.geam %>% 
+    filter(!is.na(WCJC001) & !is.na(SDEM004.bin)) %>% 
+    ggplot(aes(x=WCJC001, fill=SDEM004.bin)) + 
+    geom_bar(width=.8, 
+             position=position_dodge()) +
+    geom_text(stat='count', 
+              aes(label=..count..), 
+              position=position_dodge(width=.8), 
+              vjust=-.6) +
+    scale_fill_manual(values=cpal) +
+    ylim(0,65) +
+    labs(x="", y="", fill="Gender") +
+    theme_light()
+
+```
+
+
+Using a chi-square test we can examine if these differences across staff categories by gender could have occured by chance or not:
+
+```{r wc-tab-job-gender, fig.align='center'}
+
+print_xtab(df.geam, "WCJC001", "SDEM004.bin", 
+           caption="Contingency table job position by gender", 
+           hlabels=c("Gender","Job Position")) %>%
+    kable_styling(full_width =T)
+
+```
+
+As Table \@ref(tab:wc-tab-job-gender) shows, there are significant differences between job categories by gender.
+
+
+
+### Academic field 
+
+The GEAM has one item inquiring about the scientific discipline or field of the respondent (`WCJC003`). This item likely changes from country to country as the sub-divisons of fields of knowledge can be quite different. 
+
+
+```{r eval=F, echo=F}
+df.geam %>% 
+    filter(!is.na(WCJC003) & !is.na(SDEM004.bin)) %>% 
+    group_by(WCJC003) %>% 
+    summarize(Total = n()) %>% 
+    rename("Scientific discipline" = WCJC003)
+```
+
+
+For downstream analysis, it is recommendable to create broader categories of knowledge fields, specifically in terms of horizontal segregation: highly feminized-, balanced, or highly masculinized fields. We create a new variable (a factor) with three categories: "feminized", "balance", "masculinized": 
+
+```{r}
+
+factor(df.geam$GenDisc, c("Feminized", "Balanced", "Masculinized"))
+
+```
+
+
+```{r eval=F, echo=F}
+df.geam %>% 
+    filter(!is.na(WCJC003) & !is.na(SDEM004.bin)) %>% 
+    ggplot(aes(x=WCJC003, fill=SDEM004.bin)) + 
+    geom_bar(width=.8, 
+             position=position_dodge()) +
+    geom_text(stat='count', 
+              aes(label=..count..), 
+              position=position_dodge(width=.8), 
+              vjust=-.6) +
+    scale_fill_manual(values=cpal) +
+    #ylim(0,65) +
+    labs(x="", y="", fill="Gender") +
+    theme_light()
+```
+
+
+
+\newpage
+
+
+
+

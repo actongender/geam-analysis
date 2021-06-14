@@ -1,0 +1,167 @@
+---
+title: "Analysing GEAM Gender Equality Survey Data"
+author: "Jörg Müller, Amanda Alercotte, Kevin Guyan, Maria Caprile"
+date: 'Last update: `r Sys.Date()`'
+site: "bookdown::bookdown_site"   
+output:
+  bookdown::gitbook:
+      css:  geam_style.css
+      split_by: chapter
+      split_bib: yes
+documentclass: book
+bibliography: references.bib
+description: Guidance on carrying out statistical analysis for GEAM survey data
+link-citations: yes
+cover-image: "images/ACT_GEAM_Logo_2.png"
+biblio-style: apalike
+linkcolor: blue
+---
+
+# ACT Handbook for statistical analysis of GEAM survey data {.unnumbered}
+
+```{r setup, echo=FALSE, warning=FALSE, message=FALSE}
+
+knitr::opts_chunk$set(
+	message = FALSE,
+	warning = FALSE,
+	comment = "#>",
+	echo=TRUE, 
+	fig.pos = "!H", 
+	out.extra = ""
+)
+
+options(dplyr.sumarize.inform=F)
+options(dplyr.summarise.inform = F)
+
+
+library(tidyverse)
+library(RColorBrewer)
+library(magrittr)
+library(sjPlot)
+library(gpg)
+library(xtable)
+library(kableExtra)
+library(broom)
+library(correlation)
+
+
+source("util/encrypt.R")
+source("util/shorten_label.R")
+source("util/print_xtable.R")
+
+# define color palette
+cpal <- RColorBrewer::brewer.pal(4, "Set1")
+
+
+# load df.geam data frame
+load("data/df.geam.EN.RData")
+
+
+
+```
+
+```{r echo=FALSE, fig.align='center', out.width="70%"}
+#bookdown::render_book("index.Rmd", "bookdown::gitbook")
+#bookdown::render_book("index.Rmd", "bookdown::pdf_document2")
+#bookdown::render_book("04-2-WorkFamConflict.Rmd", "bookdown::gitbook")
+#bookdown::render_book("04-2-WorkFamConflict.Rmd", "bookdown::pdf_document2")
+knitr::include_graphics(path="images/ACT_GEAM_Logo_2.png")
+```
+
+This document provides hands-on guidance for carrying out statistical analysis of survey data generated with the Gender Equality Audit and Monitoring (GEAM) tool. Using concrete examples, it guides interested readers through the necessary steps to convert data into insights for gender equality actions.
+
+The GEAM has been developed in the frame of the ACT project. See <https://www.act-on-gender.eu> for details.
+
+To use the GEAM survey instrument please visit <https://geam.act-on-gender.eu> and apply for an account.
+
+------------------------------------------------------------------------
+
+```{r echo=FALSE, fig.align='center', out.width="22%"}
+knitr::include_graphics(path="images/ACT_logo_300dpi_high.jpg")
+```
+
+```{r echo=FALSE, out.width="14%", fig.align="center", out.extra=ifelse(knitr::is_html_output(), "style='float:left; padding-right:12px;'", "")}
+knitr::include_graphics(path="images/EUflag.jpg")
+```
+
+This project has received funding from the European Union's Horizon 2020 research and innovation programme under grant agreement No 788204.
+
+# Preface {.unnumbered}
+
+The Gender Equality Audit and Monitoring (GEAM) tool is a freely available, integrated environment for carrying out survey-based gender equality audits in organizations. It aims to enable interested researchers as well as gender equality practitioners with little experience in the social sciences and survey methodology to deploy questionnaires that generate high-quality data.
+
+This document provides guidance for carrying out **statistical analysis of survey data** generated with the GEAM tool. It is structured as a hands-on manual for practitiones with little experience in statistical analysis to interpret the obtained results within the context of their organization. The overall aim is to enable readers to **convert data into insights** and concrete gender equality actions.
+
+**A word of caution**: although this manual aims to ease the statistical analysis and interpretation of the GEAM Survey data, a sound analysis should always bring in experts with a background in statistics and the social sciences.
+
+The guidance on statistical analysis complements other templates and manuals supporting the GEAM environment.
+
+-   The GEAM manual to setup, customize and launch the GEAM survey.
+
+-   The GEAM reporting template for generating descriptive statistics of survey results as Word document or interactive website.
+
+-   The documentation of the GEAM questionnaire modules and choice of measurement scales and related scientific literature <https://zenodo.org/record/3476726>
+
+An online version of the GEAM questionnaire can be consulted under the following URLs:
+
+-   version 1: <https://www.act-on-gender.eu/survey/index.php/520000?lang=en>
+
+-   version 2: <https://www.act-on-gender.eu/survey/index.php/511548?lang=en>
+
+Version 1 of the GEAM has been revised during Spring 2021 incorporating feedback from several deployments in universities across Europe during 2020. The resulting version 2 of the GEAM has been optimized and shortened.
+
+# Credits & Acknowledgements {.unnumbered}
+
+## Contributors {.unnumbered}
+
+The following people have contribute to the manual for Analysing GEAM Gender Equality Survey Data:
+
+Jörg Müller
+
+Amanda Aldercotte
+
+*How to cite*
+
+(need to generate zenodo entry for that once finished)
+
+## GEAM Translations {.unnumbered}
+
+The GEAM questionnaire is available in 8 additional languages, apart from English. The translations have been made possible by the generous contributions of the following people:
+
+
++------------+----+----+--------------------------------------------------------------------------------------------------------+
+| Language   | v1 | v2 | Translated and revised by                                                                              |
++:===========+:==:+:==:+========================================================================================================+
+| Portuguese | x  | x  | Ana Petronilho, Universidade Nova de Lisboa, Portugal                                                  |
++------------+----+----+--------------------------------------------------------------------------------------------------------+
+| German     | x  | x  | Kathrin Rabsch, TU Berlin, Germany                                                                     |
++------------+----+----+--------------------------------------------------------------------------------------------------------+
+| Polish     | x  | x  | Ewa Krzaklewska, Paulina Sekuła, Marta Warat, Uniwersytet Jagielloński, Poland                         |
++------------+----+----+--------------------------------------------------------------------------------------------------------+
+| Lithuanian | x  | x  | Aurelija Novelskaite, Vilnius University, Lithuania                                                    |
++------------+----+----+--------------------------------------------------------------------------------------------------------+
+| Ukrainian  | x  | x  | Tetiana Median, Chernivtsi National Univesity, Ukraine                                                 |
++------------+----+----+--------------------------------------------------------------------------------------------------------+
+| Slovenian  |    | x  | Ana Hofman, Jovana Mihajlović, Research Centre of the Slovenian Academy of Sciences and Arts, Slovenia |
++------------+----+----+--------------------------------------------------------------------------------------------------------+
+| Spanish    | x  | x  | Blas Fernandez, FLACSO Argentina; Sergi Yanes, UOC, Spain.                                             |
++------------+----+----+--------------------------------------------------------------------------------------------------------+
+| French     | x  | x  | Florian Beauvallet, Conference des charge.es de mission parité diversité, cped-egalite.fr              |
++------------+----+----+--------------------------------------------------------------------------------------------------------+
+| Italian    |    | x  | Natasha Sega, SmartVenice, Italy                                                                       |
++------------+----+----+--------------------------------------------------------------------------------------------------------+
+| Greek      |    | x  | Leonidas Antoniou, Cyprus                                                                              |
++------------+----+----+--------------------------------------------------------------------------------------------------------+
+
+
+## ACT Consortium {.unnumbered}
+
+The ACT consortium consists of 17 partners: Fundació per a la Universitat Oberta de Catalunya (project coordinator, Spain), Portia (UK), NOTUS (Spain), Joanneum Research Forschungsgesellschaft MBH (Austria), Advance HE (UK), Loughborough University (UK), Facultad Latinoamericana de Ciencias Sociales (Costa Rica), Technische Universität Berlin (Germany), Karolinska Institutet (Sweden), Science Foundation Ireland (Ireland), Umweltbundesamt (Germany), Stiftung Deutsches Elektronen-Synchroton (Germany), Centre National de la Recherche Scientifique (France), Fundació Centre de Regulació Genòmica (Spain), Uniwersytet Jagiellonski (Poland), Znanstvenoraziskovalni Center Slovenske Akademije Znanosti in Umetnosti - ZRC SAZU (Slovenia), and Haskoli Islands (Iceland).
+
+## Terms of use {.unnumbered}
+
+```{r echo=FALSE, fig.align="center", out.extra=ifelse(knitr::is_html_output(), "style='float:left; padding-right:12px; padding-bottom:100px; padding-top:10px;'", "")}
+knitr::include_graphics(path="images/ccommons88x31.png")
+```
+
+This work by the Jörg Müller, Amanda Alerdotte, Kevin Guyan, Maria Caprile and the ACT Consortium is licensed under [Attribution Non Commercial ShareAlike 4.0 International (CC BY-NC-SA 4.0) license](https://creativecommons.org/licenses/by-nc-sa/4.0/).

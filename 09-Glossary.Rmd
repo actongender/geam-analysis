@@ -1,0 +1,14 @@
+# Glossary {-}
+
+
+**Correlation**. Simply means that two variables correlate to a certain degree. For example we observe that the number of deaths by drowning coincide with the number of people eating ice cream.
+
+**Causation.** From the previous example it should be clear that correlation is not causation. Although we can observe that higher numbers of people eating ice cream tend to coincide with higher numbers of drowning, the first does not cause the latter. Causation requires a detailed explanation of why things happen. In the context of the GEAM data and analysis, we can never say that X causes Y and all references to "causation" should be avoided. To understand the criteria when "causation" is indicated consult [@HillEnvironmentDiseaseAssociation1965].
+
+**Statistically significant** relationship. A statistically significant relationship indicates that you have sufficient evidence to conclude that the relationship you observe in the sample (e.g. all survey respondents in your organization) also exists in the population (e.g. all employees of your organization).
+
+**Population** 
+
+**Sample** 
+
+**Sampling error** 

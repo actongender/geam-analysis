@@ -1,0 +1,175 @@
+# Basic notions for statistical analysis
+
+The following chapter will introduce the basic concepts and some background information on statistical methods applied in subsequent chapters. Readers will be referred back to this section as the handbook proceedes with the concrete analysis and interpretation of examples which assume a basic familiarity with different quantitative data types, chi-square tests, or Anova among others. 
+
+
+## Understanding data types
+
+The GEAM collects both **quantitative** as well as **qualitative** data.
+
+### Quantitative data
+**Quantitative** data is made up of numbers such as head counts, proportions, and ratings. A lot of equality monitoring involves gathering quantitative data, because we are often interested in how many individuals there are within particular groups (i.e. how many women and how many men are in each department or in senior leadership positions). Surveys can be useful to investigate, for example, differences in engagement with university services by men and women, or differences in strength of opinion on a certain topic by gender.
+
+The simplest form of quantitative analysis involves reporting counts, proportions, or averages. For example, you might report that 6% of your staff are minority ethnic. Alternatively, you might report men and women's average agreement with the equal treatment of men and women in the organization, or the average number of bullying and harassment incidents reported by men and women. These numbers summarise something about the data; they quickly convey what is going on and where there are significant gender differences.
+
+The majority of items in the GEAM survey are quantitative and index whether respondents:
+
+```{block, type="noteHighlight"}
+Belong to a certain group (e.g. minority/majority ethnic group)
+
+Agree or disagree with certain statements (e.g. "In general, women and men are treated equally in my organization"  Options include: "Strongly disagree", "Disagree", "Neither agree or disagree", "Agree", "Agree strongly")
+
+Have had specific experiences (e.g. "During the past 12 months, have you personally experienced harassment and/or bullying in your organization?" Options include: "No", "Yes", "Prefer not to say")
+```
+
+The reporting template for the GEAM generates the descriptive statistics of all standard questions. It provides a quick way to gain an overview of the collected data. 
+
+
+The survey collects four types of quantitative data. Understanding the type of data collected will assist with subsequent analysis and deciding which statistical tests to run.
+
+**Categorical/nominal data** Is information that is grouped into categories such as gender, locations, research fields, religions, yes, no responses. This measurement does not order data into any ordered rank or hierarchy even though it can be coded, during data handling, into numbers. For example: 1 (Woman), 2 (Man), 3 (Non-binary), 4 (Other). The numbers assigned to categorical data hold no value or meaning. This data can be counted.
+
+**Rank order/ordinal data**  Is categorical information that is placed into an arbitrary rank order or hierarchy such as scale responses in surveys: poor, fair, good or 1 (no formal education), 2 (primary education), 3 (secondary education) and so on. Responses options are given value according to the scale created so they can be counted and compared.
+
+**Discrete/interval data** Is arbitrary measurements at set intervals such as number of incidents/ occurrence of an event, grouped ranges of measurements and scale responses: strongly disagree (1), disagree (2), neutral (3) agree (4) strongly agree (5) or €25,000 and under, €25,001 - €50,000, and over €50,001.
+
+**Continuous/ratio data** Is numbered data such as age, weight, height depth, width, (ungrouped) salary, counts of something or someone. The measurements in this data type are based on a 'true' zero and can be taken at face value as accurate dimensions.
+
+
+### Qualitative data
+**Qualitative** data is made up of text, and deals with the expression of opinions, thoughts and feelings. Qualitative data can be invaluable for research in gender equality, because it allows us to understand the lived experiences of people as they work or study in the organization. In other words, qualitative data tell you why these differences exist and can shed list on what can be done to alleviate them. A qualitative analysis is also indicated in case the groups or sub-groups you are interested include fewer than 25 respondents. 
+
+There are several open-ended questions included in the GEAM: `WCJC022` on bariers to training, `WCWI023` on parental leave options, `OCPER005` on experiences or perceptions of gender bias, `BISB002` and `BISB005` on the reporting and the experiences of bullying and harassment respectively.  
+
+Analyzing qualitative data involves careful and repeated reading of these responses, and extracting common themes coming up within the text. This inductive approach involves reading through the text several times, and highlighting things that seem to connect to certain aspects of experience. This is called **inductive** coding -- whereby you let the responses guide which themes are identified, instead of looking for preconceived patterns or themes in the data. 
+
+Inductive coding involves looking for topics and themes that are repeated in the texts produced by different respondents. For example, if you were specifically interested in the perceptions of gender bias amongst female academic staff who have taken maternity leave in the last year, but only had a small number of respondents in this group, you could review their free-text comments to the above questions in the GEAM survey to identify where they have had common experiences and express similar viewpoints, and any unique perceptions that may oppose those revealed by the quantitative data (e.g. the perceptions of gender equality held more generally by all female academics in the sample).
+
+Inductive coding of qualitative data can also have a quantitative aspect; by keeping track of the different themes as they emerge, you can calculate how frequently each theme occurs overall. These frequencies can tell you more about the relative importance and overall prevalence of the individual themes. For additional information on conducting qualitative analysis and the software available for facilitating this approach, see Advance HE's briefings on analysing qualitative data [@GuyanAnalysingQualitativeData2018].
+
+The GEAM contains some open text questions that require a qualitative analysis. However, the collection of qualitative data should not be considered its main purpose. Other data sources such as interviews, focus groups are much more pertinent. 
+
+
+## General considerations
+
+### Confidentiality and anonymity
+The quantitative techniques described in this section, especially when combined with smaller sample sizes, can raise concerns about confidentiality and anonymity. It is important that any reports generated from the GEAM survey analysis do not identify an individual, whether this be in the quantitative data (e.g. by presenting an individual's job title) or within a quote from the qualitative responses.
+
+To avoid issues with anonymity, Advance HE recommends applying a rounding strategy to all reports that are going to be shared publicly. Specifically, Advance HE follows the UK Higher Education Statistics Agency's (HESA) rounding strategy, which can help safeguard the identity of individual staff when dealing with quantitative data.
+
+HESA [rounding strategy](https://www.hesa.ac.uk/about/regulation/data-protection/rounding-and-suppression-anonymise-statistics):
+
+* All numbers are rounded to the nearest multiple of 5
+* Any number lower than 2.5 is rounded to 0
+* Halves are always rounded upwards (eg 2.5 is rounded to 5)
+* Percentages based on fewer than 22.5 individuals are suppressed 
+* Averages based on 7 or fewer individuals are suppressed
+
+
+One of the main issues with anonymizing data arises when gender equality research includes an intersectional analysis (e.g. of gender and ethnicity by comparing minority ethnic women to minority ethnic men, white men and white women). This type of breakdown within a small sample would allow individual members of staff, and their corresponding details and ratings, to be identified. In this situation, you may wish to take a qualitative approach as these focus more on opinions and attitudes rather than numerical differences. Generally, small numbers are often seen as a strength in qualitative research, as it allows the researcher to focus their attention and draw out rich information from participants.
+
+### Dealing with small numbers
+Often when dealing with gender equality data, the sample sizes of the subgroups you are interested in (e.g. female academics, or women who have taken maternity leave) are too small to conduct the statistical approaches described above. This may be because a group is not well represented in your organization, or because your organization itself is quite small. Quantitative techniques are more challenging when numbers are low, but not impossible: statistical tests can be run on small samples, and techniques exist that can adjust for extremely low numbers of people.
+
+Further guidance on how to deal with small samples is available in @LawsonWorkingdataGuidance2016. 
+
+**todo**
+
+
+### How to treat missing data?
+The GEAM questionnaire is quite long. It is very likely that your result data will have a considerable amount of partial responses. In this section we provide some decision criteria for excluding certain (non)responses.
+
+**todo**
+
+
+## Statistical techniques
+
+Essentially, the analysis handbook that accompanies the GEAM makes use of a variety of statistical approaches that allow the researcher to determine if there are statistically significant differences in the representation, perceptions and experiences of men and women in the organization. 
+
+When looking at group differences in a sample of a population, there is always the possibility that the differences uncovered could be the result of chance or some other factor, such as a tendency for staff who are displeased with their current working situation to be more likely to engage in a survey. Significance testing corrects for this possibility by telling you whether the differences uncovered are beyond what you would expect to find by chance. The significance level, denoted as p-values, expresses how rare your results are – the lower the p-value, the less likely that the differences between your groups are purely due to chance. P-values that are less than .05 are considered statistically significant, as this means that the odds of these differences occurring by chance alone are less than 5%. 
+
+Below is a brief overview of the different types of statistical approaches that can be applied to the GEAM data. Subsequent chapters will guide the reader through the interpretation of concrete, "real-world" examples. 
+
+### Chi-square test {#chisquaretest}
+This statistical approach tests whether there is a significant difference in a set of frequencies (or proportions) and can be applied when you are testing **categorical outcomes**. A categorical outcome is when respondents belong to either one group or another (i.e. the groups are mutually exclusive). For example, in the GEAM survey, respondents are asked about their current position in the organization and need to specify if they are on part- or full-time contracts. Respondents can only select one of these options, making the groups of staff mutually exclusive. 
+
+The Chi-square tests whether the number of respondents in the subgroups between two categorical variables (e.g. men working part-time, women working part-time, men working full-time and women working full-time) is significantly different from what would be expected by chance. The Chi-square test statistic (often denoted as $\chi^2$) has an accompanying p-value, indicating whether the difference in the group proportions in your sample are statistically significant. 
+
+It is worth noting that Chi-squared tests can also be used when the outcome variable includes more than two groups. However, the interpretation of these results gets more complex as the number of groups increases. As the Chi-square test statistic does not indicate where the significant difference is, just that there is one – instead, this needs to be determined by examining the observed and expected proportions in the sample. 
+
+A further note of caution concerns the sample size when using the Chi-square test. While it is a very useful approach for identifying whether there is a significant association between a set of categorical variables, the Chi-square test statistic is very sensitive to sample size. It can be applied to samples consisting of fewer respondents, but there should be a minimum of at least 5 individuals in each of the subgroups being compared (i.e. there should be at least 5 men and 5 women working part-time and at least 5 men and 5 women working full-time, in the above example). 
+
+The test is also restricted when it comes to extremely large samples, as it becomes more likely to report that difference in the group sizes is significant as the total sample size increases. In the case of the ASSET 2016 survey, the sample included a total of 4,869 respondents, which is quite large for a Chi-squared test, as this statistical approach is typically used with samples of less than 500 respondents. However, the above example of working part- versus full-time is a simplification, as there were other variables taken into consideration in the ASSET 2016 analysis which reduced the number of participants in the individual subgroups being compared. Thus, the most important factor to consider when deciding whether to use a Chi-squared test or a more sophisticated approach that is better for larger sample sizes, is how many individuals end up being in the subgroups being compared instead of the total number of respondents overall. 
+
+**Further Reading**
+
+**Chi-squared test** is used in the following analysis: 
+
+
+
+### ANOVA {#anova}
+ANalysis Of Variance (ANOVA) is one of the main quantitative approaches to analyzing whether group differences are statistically significant. In contrast to Chi-squared tests, ANOVAs test for differences in a **continuous outcome variable**, or a variable in which any value is possible and not limited to mutually exclusive categories. Instead of testing whether there are significant differences in group frequencies or proportions, ANOVAs test whether there are significant differences in group averages. For example, the GEAM Core item ‘In general, men and women are treated equally in my organization’, respondents can rate whether they "strongly disagree", "disagree", "neither agree nor disagree", "agree" or "strongly agree". Each of these response options has a corresponding score (i.e. Strongly disagree = 1, disagree = 2, neither agree nor disagree = 3, agree = 4, and strongly agree = 5); thus you can compare how men rated this item on average to women’s average perceptions of equal treatment in the organization. 
+
+As a more sophisticated statistical approach, ANOVAs can explore multiple group differences simultaneously (e.g. between men and women, and between respondents with and without caring responsibilities) as well as take into account the impact of other factors that are expected to have an influence on the outcome variable. The groups you are comparing (e.g. being a man or a woman) are considered **independent variables**, or **predictors**, while other factors that might be related to the outcome, such as working part- or full-time, are defined as **control variables**. 
+
+Importantly, ANOVAs can include independent variables that include more than two groups, such as whether there are significant differences in the average ratings of staff who are academics/researchers, technicians, or administrative staff, although these require follow-up analyses to determine exactly between which two groups the difference exists. 
+
+The outputs of an ANOVA include two key pieces of information. The first piece of information describes how well your model, or the group of control and independent variables you have included in the analysis, fits the data in your sample. Goodness-of-fit is represented by the **F-statistic** and follows the same statistical significance cut-offs as described above. Essentially, what this statistic tells you is if the variables included in your analysis come together to predict differences in the outcome variable well. 
+
+The second key piece of information relates to the predictors, signifying whether these at the individual level significantly contribute to differences in the outcome variable. The statistical significance of the individual predictors in your ANOVA is represented by beta ($\beta$). In the example of gender as a predictor, a $\beta$-value that is statistically significant means that there is a significant difference in how men and women responded to the outcome variable. 
+
+The ANOVA output included in the GEAM reporting template only includes one predictor at a time, and so only provides information regarding the significance of the predictor rather than the whole model (i.e. it does not include the F-statistic). 
+
+
+Within the analysis of the ASSET 2016 survey, ANOVAs were used to identify and explore the following significant gender differences: 
+
+* Men felt that their organization was more committed to gender equality than women. **(LINK TO SECTION IN MANUAL)**
+* Women felt that men had the advantage in the allocation of tasks and resources related to professional development (e.g. receipt of mentoring, attention from senior management, access to informal circles of influence, etc.), additional academic duties (e.g. teaching, administrative and pastoral responsibilities) and markers of esteem (e.g. invitations to conferences, appointments to editorships, etc.).
+* Women felt it was easier for a man to obtain a senior post whereas men did not perceive an advantage for either gender.
+* Compared with men, women were on average more likely to consider factors such as flexibility of working hours, work/life balance, the availability of childcare facilities, and an organization’s reputation for career development when deciding to take up their current post.  
+* Male STEMM academics were more likely to be receiving a higher salary than female STEMM academics. 
+* Women spent more of their time on teaching responsibilities while men reported spending more of their time on research-related activities.  
+* On average, men viewed their departments as more supportive, transparent and fair, while women tended to be more negative about the demands on time and effort their department placed on them. 
+* Women were more likely to say that their gender and having caring responsibilities had negatively impacted their careers in academia than men. 
+* Men were more likely to have a formally assigned mentor, access to senior staff, a supportive line manager, and serve on important departmental committees than women. 
+
+The above results not only illustrate the strengths of ANOVA as a statistical approach, but also provide gender equality researchers with a number of examples of the types of research questions that can be explored using the GEAM survey data (as many of the ASSET questions were adapted and worked into the GEAM Core survey) and this type of group-based analysis. Moreover, because there was a large number of STEMM academics in the ASSET 2016, the ANOVAs used to analyze gender differences were also able to look at whether these gender differences 
+
+1. persisted when other factors, such as respondents’ current post, age, and academic discipline, were taken into account (i.e. included as control variables); and 
+
+2. intersected with other protected characteristics, such as respondents’ ethnicity, sexual orientation, caring responsibilities and disability status. 
+
+The general rule of thumb with ANOVA and sample size is that you should have **at least 10 respondents** for every variable that you include in the analysis. In the ASSET 2016 ANOVA examples above, there were three control variables, four protected characteristics, gender and four intersectional variables included in the analysis, bringing the total number of variables to 12, meaning that a minimum sample size of roughly 120 individuals was needed. 
+
+In contrast to Chi-squared tests, there is no maximum sample size associated with ANOVA, and for smaller samples, you may consider either reducing the number of variables included in the model or using a simpler form of quantitative analysis, such as independent samples t-tests or confidence intervals described in the next two sections. 
+
+**Further reading**
+
+[Online Statistics Education - ANOVA](https://onlinestatbook.com/2/analysis_of_variance/ANOVA.html)
+
+
+**ANOVA** is used in the following analysis: 
+
+
+### Independent samples t-tests
+Independent samples t-tests are essentially a simplified ANOVA which involve comparing the average ratings or scores for two independent (i.e. categorical) groups. ANOVAs are essentially a series of t-tests that include a more stringent cut-off value for statistical significance in order to take other factors and running multiple tests into account. As with ANOVAs, t-tests are only appropriate for outcome variables that are on a continuous scale. However, while ANOVAs require a larger sample size in order to investigate (i) a number of group differences at the same time, and (ii) include other factors that may be related to the outcome variable, independent samples t-tests only require a **minimum of 30 respondents** as they directly compare one group to another one at a time. In the ANOVA example above, if there had been fewer than 30 respondents with caring responsibilities in the sample, an independent sample t-test could have been used to identify whether staff with caring responsibilities experienced greater family-work conflict than staff without caring responsibilities. Additional measures, such as matching the respondents in the smaller sample (i.e. those with caring responsibilities) to other respondents in the comparison group (i.e. those without caring responsibilities) on key variables such as gender, job grade, contract type and so on can be applied to improve the rigor of this simpler type of statistical analysis.
+
+**Further reading**
+
+**Independent sample t-tests** are used in the following analysis: 
+
+
+### Confidence intervals
+The above analyses (chi-squared tests, ANOVA and independent t-tests) all involve calculating either a proportion or an average from a sample of survey respondents. However, when these calculations are based on a smaller sample of respondents, you want to ensure that these are true reflections of the actual population. For example, it may be that the staff who completed the GEAM survey were more likely to participate in such a survey because they have an interest in gender equality or because they are looking for a way of expressing discontent. 
+
+This sort of problem is called sampling error, and this risk is particularly problematic for small samples. However, one way around this is to calculate confidence intervals. A confidence interval is the range around the proportions or averages within the true population is likely to fall. In other words, instead of saying that a proportion or average that is calculated based on a small sample is a true reflection of the whole population, you calculate a range of values in which the proportion or average of the population most likely lies. The most commonly used confidence interval in the social sciences is the 95% confidence interval, meaning that one can be 95% certain that the sample proportion or average falls within the calculated range.
+
+Confidence intervals can also be used to test whether two groups are significantly different from one another, either with regards to their representation (e.g. on full- or part-time contracts) or their average ratings of a survey question (e.g. the degree to which respondents' family life interferes with their working life). In general, if the 95% confidence intervals surrounding a sample's proportion or average score overlap with the 95% confidence intervals of another sample's proportion or average score, the two groups are not considered to significantly differ from one another. In contrast, using the above example of the family-work conflict scale again, if the 95% confidence interval around the average score for the 'staff with caring responsibilities' group did not overlap with the 95% confidence interval around the average score for the 'staff without caring responsibilities' group, then we would come to the same conclusion as the ANOVA results, that these two groups had significantly different experiences with regards to how much their family life interferes with their work. 
+
+For additional details on confidence intervals and their application in testing for statistical significance in small samples, see Advance HE's briefings on working with equality data [@LawsonWorkingdataGuidance2016]. 
+
+**Further reading**
+
+
+
+\newpage

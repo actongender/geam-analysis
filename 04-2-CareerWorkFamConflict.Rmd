@@ -1,0 +1,282 @@
+## Work-Family Conflict Scale
+
+Existing research indicates the negative impact of work-family conflict in terms of heightened burnout [@KinmanLifeWorkJob2008], lower job satisfaction, diminished health and higher turnover intentions [@ZabrodskaBurnoutuniversityfaculty2018] for academic staff.  
+
+The GEAM uses the Work-Family Conflict Scale [@breyer2016] is a well established measurement instrument on work-life balance that has been used in the [2002](http://dx.doi.org/10.4232/1.11564) and [2012](http://dx.doi.org/10.4232/1.12022) version of the Family and Changing Gender Roles module of the International Social Survey Program (ISSP).
+
+Source: Breyer, B., and M. Bluemke. 2016. "Work-Family Conflict Scale (ISSP)." ZIS - The Collection Items and Scales for the Social Sciences. <https://doi.org/10.6102/zis243>.
+
+The scale is composed of four items which are subdivided in two dimensions to measure how **work interferences with family** (WF) and how **family interferes with work** (FW).
+
++-----------+--------------------------------------------------------------------------------------------------------------------+----------------------------------+
+| GEAM Code | Item                                                                                                               | Facet                            |
++===========+====================================================================================================================+==================================+
+| SQ001     | I have come home from work too tired to do the chores which need to be done.                                       | WF - work interferes with family |
++-----------+--------------------------------------------------------------------------------------------------------------------+----------------------------------+
+| SQ002     | It has been difficult for me to fulfil my family responsibilities because of the amount of time I spent on my job. | WF - work interferes with family |
++-----------+--------------------------------------------------------------------------------------------------------------------+----------------------------------+
+| SQ003     | I have arrived at work too tired to function well because of the household work I had done.                        | FW - family interferes with work |
++-----------+--------------------------------------------------------------------------------------------------------------------+----------------------------------+
+| SQ004     | I have found it difficult to concentrate at work because of my family responsibilities.                            | FW - family interferes with work |
++-----------+--------------------------------------------------------------------------------------------------------------------+----------------------------------+
+
+There are national reference values available to deduce if respondents are below or above the national average of work conflict scale (see also [here](https://zis.gesis.org/skala/Breyer-Bluemke-Work-Family-Conflict-Scale-(ISSP)#Table6)).
+
+
+### Preparation and pre-processing
+
+In order to use the work-family conflict scale for a more in-depth analysis, several pre-processing steps need to be carried out.
+
+```{block, type="noteHighlight"}
+The 'preprocess_lss.R' contained in the reporting template carries out the relevant pre-processing steps by default. The resulting R data frame should contain the corresponding variables, ready to use. 
+```
+
+#### Reverse coding {-}
+
+First, the scale needs to be recoded in order to ease interpretation. Original response items are coded in the following way:
+
+```{r, eval=F}
+levels(df.geam$WorkFamConfISSP.SQ001.)
+```
+
+```{r echo=F, eval=T}
+cat(levels(df.geam$WorkFamConfISSP.SQ001.), sep="\n") # print each entry in new line
+```
+
+By reversing the response scale, lower numers indicate lower work-family conflict and higher numbers will indicate a higher work-family conflict. The [`fct_rev()`](https://forcats.tidyverse.org/reference/fct_rev.html) method from the [forcats](https://forcats.tidyverse.org/index.html) package does this job:
+
+```{r}
+
+df.geam %<>%
+        mutate(WFC.RE.SQ001. = fct_rev(WorkFamConfISSP.SQ001.), 
+               WFC.RE.SQ002. = fct_rev(WorkFamConfISSP.SQ002.), 
+               WFC.RE.SQ003. = fct_rev(WorkFamConfISSP.SQ003.),
+               WFC.RE.SQ004. = fct_rev(WorkFamConfISSP.SQ004.))
+```
+
+The order is now reversed where lower numbers indicate lower conflict and higher ratings a stronger work-family conflict.
+
+```{r echo=T, eval=F}
+levels(df.geam$WFC.RE.SQ001.)
+```
+
+```{r echo=F, eval=T}
+cat(levels(df.geam$WFC.RE.SQ001.), sep="\n") # print each entry in new line
+```
+
+
+#### Mean values {-}
+
+Since the work-family conflict scale is composed of two different dimension, we can calculate the average values for both, the work-family conflict as well as the family-work interference for each respondent. This will make it easier to produce summary statistics for the entire survey in a second step.
+
+```{r}
+    df.geam %<>% 
+        rowwise() %>% 
+        mutate(WorkFamRowMean = mean(c(WFC.RE.SQ001., WFC.RE.SQ002.), na.rm=T), 
+               FamWorkRowMean = mean(c(WFC.RE.SQ003., WFC.RE.SQ004.), na.rm=T), 
+               WFCRowMean     = (WorkFamRowMean+FamWorkRowMean)/2 ) %>% 
+        ungroup()
+```
+
+
+#### Care responsibilities {-}
+
+An all important variable to examine in relation to work-family confict is care responsibilities. As described in the previous section on [care responsibilities](#careresp), we combine the two variables for child-care as well as care for dependent adults into a single, new variable `CareResp`. This makes the application of contingency tables more straight forward. 
+
+```{r echo=F}
+# check if CareResp exists, otherwise create variable
+
+if (!("CareResp" %in% names(df.geam))){
+  df.geam %<>% 
+        mutate(CareResp = if_else((WCWI006 == "Yes" | 
+                                   WCWI008 == "Yes"), TRUE,FALSE))
+}
+```
+
+
+```{r echo=F}
+
+# create a subset 
+df.sub <- df.geam %>% 
+  select(starts_with("WFC.RE.SQ"), CareResp, Gender=SDEM004.bin, WorkFamRowMean, FamWorkRowMean, WFCRowMean)
+  
+```
+
+
+
+
+### A first visual exploration
+
+First, let's have a look at the overall response pattern across the four work-family conflict response items:
+
+```{r wfc-explore, fig.align='center', fig.cap="Work-family conflict scores", out.height="75%", out.width="100%"}
+
+cpal <- RColorBrewer::brewer.pal(4, "Set1")
+
+df.sub %>% 
+  select(starts_with("WFC.RE.SQ")) %>% 
+  plot_stackfrq(geom.colors =cpal,
+                geom.size = .4,
+                show.total = F, 
+                digits = 0, 
+                show.axis.prc = T) +
+  theme_light() + 
+  theme(legend.position = "bottom", 
+        legend.direction = "horizontal",
+        legend.justification = c(0,1),
+        plot.margin = unit(c(.2,.8,.2,.2), "cm"),
+        axis.text.x=element_blank(),
+        axis.text = element_text(size = 10))
+
+
+```
+
+The visual inspection is combined with expecting the mean values for both dimensions of the work-family conflict. It seems that family tends to interfere more strongly in respondents work life as the wider upper green ("several times a month") and violet ("several times a week") bars indicate. Almost 90% of respondents indicate that they "never" or "once or twice" experienced interference from family in work (lower two bars). 
+
+We also see that the pattern is consistent, i.e. the upper two bars and the lower two bars exhibit similar percentages for each answer option. We would expect this consistency due to conceptualization of work-family conflict as a two-directional phenomena, where the upper two items measure the same family-work interference while the lower two items measure work-family intereference.  
+
+Examining the mean values of work-family as well as family-work conflict confirms the visual result: 
+
+```{r}
+tbl1 <- df.sub %>% 
+    summarize(Total = n(), 
+              'Mean Work-Family' = mean(WorkFamRowMean, na.rm=T), 
+              'Mean Family-Work' = mean(FamWorkRowMean, na.rm=T), 
+              'Overall Mean' = mean(WFCRowMean, na.rm=T))
+```
+
+```{r echo=F}
+kbl(tbl1, 
+    booktabs = T,
+    digits=3, 
+    caption="Mean work-family-conflict scale values") %>%
+    kable_styling(full_width=T, latex_options =c("hold_position"))
+```
+
+.. the mean value for family-work interference is higher than for work-family interference. This means that family responsibilities tend to interfere more strongly with work than the other way round, considering all respondents. 
+
+ 
+
+### Detailed analysis: who has work-life balance issues?
+
+A more in-depth analysis will be necessary to understand the exact profile of the respondents who indicate a strong work-family conflict. 
+
+#### Gender differences {-}
+
+Let's examine if there are gender differences in work-life balance. The mean values of both work-family conflict by gender are shown below.
+
+```{r}
+
+tbl2 <- df.sub %>% 
+  filter(!is.na(Gender)) %>% 
+  group_by(Gender) %>% 
+  summarize(Total = n(), 
+            'Mean Work-Family' = mean(WorkFamRowMean, na.rm=T), 
+            'Mean Family-Work' = mean(FamWorkRowMean, na.rm=T), 
+            'Overall Mean' = mean(WFCRowMean, na.rm=T)) 
+```
+
+```{r echo=F}
+kbl(tbl2, 
+    booktabs = T, 
+    digits=3, 
+    caption="Mean work-family-conflict values by gender") %>%
+    kable_styling(full_width=T, latex_options =c("hold_position"))
+```
+
+It seems that the mean work-family conflict values are very similar, differing only by 0.13. However, there are slightly larger differences between the mean family-work conflict values by 0.53.
+
+A statistical test will tell us, if these differences are significant or could be expected by chance alone. In order to carry out the [ANOVA](#anova), we use the row-wise mean values first for family-work conflict and separately the work-family conflict. 
+
+```{r}
+fw.gender <- aov(FamWorkRowMean ~ Gender, data=df.sub)
+wf.gender <- aov(WorkFamRowMean ~ Gender, data=df.sub)
+```
+
+Examining the p-value (< 0.001) it seems that there are **statistically significant differences** for **family-work** interference between women and men:
+
+```{r echo=F}
+kbl(broom::tidy(fw.gender), 
+    booktabs = T, 
+    digits=3, 
+    caption="Anova: family-work interference by gender")%>%
+    kable_styling(full_width=T, latex_options =c("hold_position"))
+```
+
+Women in our sample of respondents indicate a higher mean work-family conflict `r round(pull(tbl2[2,3]),2)` than men `r round(pull(tbl2[1,3]),2)` and these differences are unlikely to be produced by chance but reflect the higher household and care responsibilties of women. 
+
+
+When looking at **work-family** interferences in turn, we see that there are **no statistically significant differences**  between women and men. Although women respondents have a slightly higher mean value than men, this differences could have been produced by chance.  
+
+```{r echo=F}
+kbl(broom::tidy(wf.gender), 
+    booktabs = T,
+    digits=3, 
+    caption="Anova: work-family interference by gender")%>%
+    kable_styling(full_width=T, latex_options =c("hold_position"))
+```
+
+
+
+#### Care responsibilities {-}
+
+In addition to gender, work-family conflict should be related to different care responsibilities of respondents. This includes both: care responsibilities for dependent adults (`WCWI006`) and carefor children (`WCWI008`). The mean work-family conflict values can now be grouped according to care responsibilities variable that we prepared previously. Results are shown in the following table. 
+
+```{r}
+
+tbl3 <- df.sub %>% 
+    filter(!is.na(CareResp)) %>% 
+    group_by(CareResp) %>%
+    summarize(Total = n(), 
+              'Mean Work-Family' = mean(WorkFamRowMean, na.rm=T), 
+              'Mean Family-Work' = mean(FamWorkRowMean, na.rm=T), 
+              'Overall Mean' = mean(WFCRowMean, na.rm=T))
+
+```
+
+
+```{r echo=F}
+kbl(tbl3, 
+    booktabs = T, 
+    digits=3, 
+    caption="Mean work-family-conflict values by care responsibilities")%>%
+    kable_styling(full_width=T, latex_options =c("hold_position"))
+```
+
+Mean work-family conflict values are again very similar (differ only by `r round(pull(tbl3[2,3])-pull(tbl2[1,3]),2)`) which does not confirm our expectations - respondents who indicate care respondibilities should also have a stronger family-work conflict.  
+
+Mean family-work conflict values, on the other hand, differ more strongly (`r round(pull(tbl3[2,4])-pull(tbl2[1,4]),2)`). 
+
+However, as the following [ANOVA](#anova) results show, neither of these differences is statistically significant. It seems that the care responsibilities do not interfere substantially with work among this sample of respondents. 
+
+```{r}
+fw.care <- aov(FamWorkRowMean ~ CareResp, data=df.geam)
+wf.care <- aov(WorkFamRowMean ~ CareResp, data=df.geam)
+```
+
+```{r echo=F}
+
+# combine individual results into one table
+wfc.care <- broom::tidy(fw.care) %>% 
+    add_row(broom::tidy(wf.care))
+
+kbl(wfc.care, 
+    booktabs = T,
+    digits=3, 
+    caption="Anova: work-family conflict by care responsibilities")%>%
+    group_rows(group_label="Family-work interference", start_row=1, end_row=2) %>%
+    group_rows(group_label="Work-family interferences", start_row=3, end_row=4) %>%
+    kable_styling(full_width=T, latex_options =c("hold_position", "scale_down"))
+```
+
+
+
+#### Further explorations {-}
+
+In addition to examine the work-family conflict scores in relation to gender or care responsibilities, other interesting variables could use variables `WCJC001` (current position), or type of contract `WCJC010` (full- or part-time), or socio-economic background (`SDEM017` and `SDEM018`). 
+
+A potential analysis regarding `age` is also indicated, as work-family conflict will vary according to the life-stage of respondents. 
+
+
+
+\newpage

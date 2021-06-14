@@ -1,0 +1,117 @@
+# Introduction
+
+The gathering and analysis of data is central to equality and diversity work, but can be challenging without guidance. The Gender Equality Audit and Monitoring (GEAM) questionnaire produces a wealth of data regarding the socio-demographic/ academic positions of respondents, their working conditions, organizational culture and climate, as well as their experiences of microaggressions and sexual harassment. Converting this data into insights for action towards greater gender equality requires a careful analysis and interpretation - in the context of your organization.
+
+Data analysis ususally proceeds in two steps:
+
+The first step after downloading the data is to inspect it on a very basic level. Within the GEAM framework, we have written a [reporting template](https://github.com/actongender/geam-report) that faciliates the automatic generation of the **descriptive statistics** of the questionnaire. The template generates a Word document (or interactive website) containing the frequency tables and illustrations (or charts) for each variable of the GEAM. This initial report should be examined in the context of your organization to get an understanding of the data and identify possible areas of interest for a more in-depth analysis.
+
+After an inital exploration of the descriptive statistics, a more **in-depth statistical analysis** should be carried out. This involves statistical tests to detect significant differences betweem women and men for example in terms of job satisfaction, opportunities for promotion among many others. There is no clear limit to which possible relations can be explored. Depending on the number of responses received, an **intersectional analysis** could be envisioned, where differences across several dimensions such as gender, age, and socioeconomic status can be carried out.
+
+```{block, type="noteHighlight"}
+The proposed analysis in this book takes the standard questions of the GEAM as its point of reference. As long as not noted otherwise, the example code and analysis applies to both GEAM [version 2](https://www.act-on-gender.eu/survey/index.php/511548?lang=en) and [version 1](https://www.act-on-gender.eu/survey/index.php/511000?lang=en). 
+
+```
+
+
+## From data to insights: interpreting GEAM survey results
+
+The interpretation of gender equality data requires thinking about the significance of the results in context. As an organization embarks on their own gender equality research and planning, it is imperative that the results of the GEAM survey are interpreted by a *team* that combines members with an understanding of the staff population and their work environment with those who have a background in scientific research. 
+
+In other words, gender equality research requires a team effort – the GEAM survey is a starting off point that provides organisations with a consistent and validated means of collecting gender equality data, but it cannot fall to one individual to interpret its results or apply them to the varied and complex environment of a whole organisation. Instead, the latter requires a combination of key individuals from the organisation to interpret the results of the survey in context, to determine what these results mean in terms of the organisation’s next steps for their gender equality plans, and to implement these action plans effectively. 
+
+
+## How to use this handbook
+
+This book is structured according to the main thematic sectsion of the GEAM questionnaire. After a short introduction of basic statistical concepts in chapter 2, subsequent chapters introduce the main questions and measurement scales of each section, introduce the relevant literature and suggest avenues of analysis.
+
+-   Chapter 3: characterizes respondents according to socio-demographic variables and job position
+
+-   Chapter 4: analyzes respondents in relation to issues concerning career advancement such as care responsibilities or type of contracts
+
+-   Chapter 5: analyzes the overall organizational climate for gender equality
+
+-   Chapter 6: analyzes interpersonal behaviors and experiences, including microaggressions and sexual harassment
+
+Each section includes concrete examples using the corresponding GEAM variables, guiding the reader to carry out the relevant statistical analysis and tests. Building upon the available scientific literature - insofar we use established measurement scales - we provide example interpretations of the data.
+
+### Code, Results, Interpretation
+
+The examples in this book usually include the R code of the analysis, the output, and our interpretation. For example, the following R code:
+
+```{r eval=F}
+ggplot(df.geam, aes(SDEM004)) + 
+    geom_bar() 
+    labs(x="", y="") +
+    theme_light()
+```
+
+... will produce a chart on the overall responses for variable `SDEM004` which inquired about the gender of respondents:
+
+```{r echo=F, fig.align='center', fig.caption="Example R graphics and code" }
+ggplot(df.geam, aes(SDEM004)) + 
+    geom_bar() + 
+    labs(x="Question SDEM004: 'Are you..?'", y="") +
+    theme_light()
+```
+
+For each result, we then provide the corresponding interpretation. In the above example, we can see that there are more women respondents than men, while we also have 4 who prefered to not answer and one person indicating "Other" gender identity. 
+
+Depending on the question- and data type, example code and analysis will differ, ranging from some descriptive statistics to more advanced techniques such as Analysis of Variance (Anova) or Factor Analysis.
+
+In each case you should be able to copy the R code and use it in your own analysis (in case you are familiar with R). In sofar your result dataset is based upon the standard GEAM questionnaire, the variable names are identical and it should run without problems. 
+
+
+```{block, type="noteHighlight"}
+Run the analysis code with your own data: download the manual from [Github](https://github.com/actongender/geam-analysis), load your data (edit `index.Rmd`) and re-run the code sections. 
+```
+
+The analysis in this manual are done with a simulated, **artifical** dataset. The presented results are not necessarly exemplary for what you will find in your data. Correlations and cross-tabs have been constructed specifically to illustrate the possibilities of statistical analysis rather than mirror a real-world situation. 
+
+The dataset used for this handbook are available inside the `data/` folder. When re-running the analysis with your own data, your results will differ. However, the presented examples should nevertheless be helpful to make sense and interpret your data in the context of your organization. 
+
+
+## A word about statistical analysis
+
+Although this manual aims to ease the statistical analysis and interpretation of the GEAM Survey data, a sound analysis should always involve experts with a background in statistics and the social sciences.
+
+To refresh some of the analytical procedures used in this manual, you may want to consult:
+
+-   [OpenIntro Statistics](https://leanpub.com/openintro-statistics).
+
+-   [Online Statistics Education](https://onlinestatbook.com/2/index.html).
+
+-   ... others?!
+
+## About R and other statistical software packages
+
+In order to carry out the statistical analysis, readers need to have access to a statistical software package. The most common environments used nowadays include SPSS (IBM), STATA (StataCorp). Although these platforms are widely used, they have the disadvantage of requiring a license fee.
+
+Freely available software environments for statistical analysis include the [R project for statistical computing](https://www.r-project.org/) or [JASP](https://jasp-stats.org/) among others. The advantage of these open environments is, that they are available at no additional cost and come with a wealth of support and learning materials.
+
+Even though recommended analysis and interpretation of the GEAM data can be carried out with any statistical software package, we use the R environment in this manual. Although unfamiliar to some, it has several advantages:
+
+-   this handbook itself is written in [bookdown](https://bookdown.org/), i.e. a package of the R environment to faciliate the authoring of texts that combine code + results and its interpretation. We use the same technology (R+bookdown) in the reporting template to generate the descriptive statistics of GEAM data.
+
+-   R subscribes to the philosophy of open source and collaboration. It's easy for others to fix errors, improve or extend this manual for example with new types of analysis via our [Github Respository](https://github.com/actongender/geam-analysis)
+
+-   With R it is easy to engage in open science practice. It provides many ready-made solutions to create reproducible research, including the documentation of data, analysis and writing of books or papers. See for example [RopenSci](https://ropensci.org/about/).
+
+
+Here are some **helpful resources** if you want to get started with R: 
+
+Download and [install R environment](https://www.r-project.org/)
+
+Download and install [RStudio Desktop](https://rstudio.com/products/rstudio/), the standard editor for working with R code. Follow instructions of the manual to download and prepare GEAM result dataset.
+
+Some helpful resources to get started with R specifically:
+
+-   An excellent list of good (and free) learning resources is provided by [Paul van der Laken](https://paulvanderlaken.com/2017/08/10/r-resources-cheatsheets-tutorials-books/#introductory).
+
+-   [R Cookbook](http://www.cookbook-r.com/) has recipies for many common problems: <http://www.cookbook-r.com/>
+
+-   A Beginners guide: YaRrr <https://bookdown.org/ndphillips/YaRrr/>
+
+-   Introduction with a focus on data science: [R for Data Science](https://r4ds.had.co.nz/index.html) by Garrett Grolemund and Hadley Wickham.
+
+-   Introduction with focus on data visualization: [Data Visualization for the Social Sciences](https://socviz.co/index.html) by Kieran Healy.
